@@ -11,6 +11,6 @@ func main() {
 	err := database.ConnectDB()
 
 	if (err != nil){
-		log.Println("❌ Failed to connect to db %v", err)
+		log.Printf("❌ Failed to connect to db %v\n", err)
 	}
 }

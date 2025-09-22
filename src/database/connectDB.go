@@ -1,8 +1,9 @@
 package database
 
 import (
-	"fmt"
 	"log"
+
+	"go-backend/database/seeds"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,7 +13,7 @@ var dbClient *gorm.DB
 
 func ConnectDB() error{
 	var err error
-	dbString := fmt.Sprintf("host=localhost user=postgres password=postgres dbname=postgres port=5434")
+	dbString := "host=localhost user=postgres password=postgres dbname=postgres port=5434"
 
 	dbClient, err = gorm.Open(postgres.Open(dbString), &gorm.Config{})
 	
@@ -32,6 +33,8 @@ func ConnectDB() error{
 
 	
 	log.Println("✅ Successfully connected to DB")
+
+	SeedDB()
 	return nil
 }
 
@@ -42,4 +45,10 @@ func GetDB() *gorm.DB {
 func CloseDB() {
 	con, _ := dbClient.DB()
 	con.Close()
+}
+
+func SeedDB() {
+	seeds.SeedRoles(dbClient)
+	seeds.SeedUsers(dbClient)
+	seeds.SeedUserRoles(dbClient)
 }

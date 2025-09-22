@@ -1,0 +1,1 @@
+ALTER TABLE Roles ALTER COLUMN permissions TYPE VARCHAR(500) USING permissions::VARCHAR(500);
