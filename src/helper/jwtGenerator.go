@@ -14,13 +14,13 @@ type jwtPasswordClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(stringToSign string, userEmail string) (string, error) {
+func GenerateJWT(stringToSign string, userId string) (string, error) {
 	claim := jwtPasswordClaims{
 		Password: stringToSign,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
-			Issuer: userEmail,
+			Issuer: userId,
 		},
 	}
 

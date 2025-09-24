@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-backend/api"
 	"go-backend/database"
 	"log"
 )
@@ -13,4 +14,5 @@ func main() {
 	if (err != nil){
 		log.Printf("❌ Failed to connect to db %v\n", err)
 	}
+	api.InitServer()
 }

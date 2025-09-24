@@ -18,7 +18,7 @@ type User struct {
 	FirstName string `gorm:"size:256;not null;"`
 	LastName string `gorm:"size:256;not null;"`
 	Email string `gorm:"size:256;not null;unique"`
-	Password string `gorm:"size:16;not null;"`
+	Password string `gorm:"size:255;not null;"`
 	UserRoles *[]UserRole
 	CreatedAt time.Time
 	UpdatedAt time.Time

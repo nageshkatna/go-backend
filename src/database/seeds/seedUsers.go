@@ -30,10 +30,17 @@ func SeedRoles(db *gorm.DB) error {
 }
 
 func SeedUsers(db *gorm.DB) error {
+	hashedPassword, err := helper.HashPassword("password123")
+
+	if err != nil {
+		log.Printf("❌ Failed to hash password %v\n", err)
+		return err
+	}
+
 	users := []models.User{
-		{Id: uuid.New(), FirstName: "John", LastName: "Doe", Email: "john.doe@gmail.com", Password: helper.HashPassword("password123")},
-		{Id: uuid.New(), FirstName: "Jane", LastName: "Smith", Email: "jane.smith@gmail.com", Password: helper.HashPassword("password123")},
-		{Id: uuid.New(), FirstName: "Alice", LastName: "Johnson", Email: "alice.johnson@gmail.com", Password: helper.HashPassword("password123")},	
+		{Id: uuid.New(), FirstName: "John", LastName: "Doe", Email: "john.doe@gmail.com", Password: hashedPassword},
+		{Id: uuid.New(), FirstName: "Jane", LastName: "Smith", Email: "jane.smith@gmail.com", Password: hashedPassword},
+		{Id: uuid.New(), FirstName: "Alice", LastName: "Johnson", Email: "alice.johnson@gmail.com", Password: hashedPassword},	
 	}
 
 	for _, user := range users {
