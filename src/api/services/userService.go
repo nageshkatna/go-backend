@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"go-backend/api/dto"
 	"go-backend/database"
@@ -17,8 +18,7 @@ func NewUserService() *UserService {
 }
 
 func (us *UserService) GetUserByEmail(req *dto.LoginRequest) ([]models.User, error) {
-	db := database.GetDB()
-
+	var db = database.GetDB()
 	email, password := req.Email, req.Password
 
 	var users []models.User
@@ -37,8 +37,7 @@ func (us *UserService) GetUserByEmail(req *dto.LoginRequest) ([]models.User, err
 }
 
 func (us *UserService) CreateUser(req *dto.RegisterUserRequest, role *[]models.UserRole) ( dto.LoginResponse, error) {
-	db := database.GetDB()
-
+	var db = database.GetDB()
 	hashedPassword, err := helper.HashPassword(req.Password)
 	if err != nil {
 		log.Printf("❌ Failed to hash password %v\n", err)
@@ -68,8 +67,7 @@ func (us *UserService) CreateUser(req *dto.RegisterUserRequest, role *[]models.U
 }
 
 func (*UserService) GetPaginatedUser(req *dto.Pagination) (dto.FetchUserRoleWithPaginatedResponse, error) {
-	db := database.GetDB()
-
+	var db = database.GetDB()
 	var users []models.User
 	var total int64
 
@@ -114,4 +112,47 @@ func (*UserService) GetPaginatedUser(req *dto.Pagination) (dto.FetchUserRoleWith
 	}
 	
 	return  response, nil
+}
+
+func (*UserService) UpdateUser(userId string, updateObj dto.UpdateUserObj) (string, error) {
+	var db = database.GetDB()
+	updates := map[string]interface{}{}
+
+	if updateObj.FirstName != nil {
+			if *updateObj.FirstName != "" {
+					updates["first_name"] = *updateObj.FirstName
+			}
+	}
+	if updateObj.LastName != nil {
+			if *updateObj.LastName != "" {
+					updates["last_name"] = *updateObj.LastName
+			}
+	}
+	if updateObj.Email != nil {
+			if *updateObj.Email != "" {
+					updates["email"] = *updateObj.Email
+			}
+	}
+	if updateObj.RoleId != nil {
+			if *updateObj.RoleId != 0 {
+					if err := db.Model(&models.UserRole{}).Where("user_id = ?", userId).Update("role_id", *updateObj.RoleId).Error; err != nil {
+						log.Printf("Error while updating user role %v", err)
+						return "", err
+    }
+			}
+	}
+
+	if len(updates) == 0 {
+		return "", errors.New("no fields to update")
+	}
+	
+
+	if err := db.Model(&models.User{}).
+        Where("id = ?", userId).Updates(updates).Error; err != nil {
+        log.Printf("Error while updating user %v", err)
+        return "", err
+    }
+
+
+	return "updated", nil
 }

@@ -17,7 +17,7 @@ func NewUserController() *UserController {
 	return &UserController{}
 }
 
-func (h *UserController) LoginHandler(c *gin.Context) {
+func (*UserController) LoginHandler(c *gin.Context) {
 	req := &dto.LoginRequest{}
 	err := c.ShouldBindJSON(req)
 	if err != nil {
@@ -48,7 +48,7 @@ func (h *UserController) LoginHandler(c *gin.Context) {
 	c.JSON(http.StatusAccepted, &usersResponse)
 }
 
-func (h *UserController) RegisterHandler(c *gin.Context) {
+func (*UserController) RegisterHandler(c *gin.Context) {
 	req := &dto.RegisterUserRequest{}
 	err := c.ShouldBindJSON(req)
 	if err != nil {

@@ -46,3 +46,15 @@ type PaginatedResponse struct {
 	TotalRecords int64 `json:"totalRecords" binding:"required"`
 	TotalPages uint `json:"totalPages" binding:"required"`
 }
+
+type UpdateUserObj struct {
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	RoleId  *uint `json:"roleId,omitempty"`
+}
+
+type UpdateRequest struct {
+	UpdateUserObj
+	UserId string `json:"userId" binding:"required"`
+}
