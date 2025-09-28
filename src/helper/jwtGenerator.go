@@ -11,12 +11,14 @@ var secretkey = []byte("mySecretKey")
 
 type jwtPasswordClaims struct {
 	Password string `json:"password"`
+	RoleId uint `json:roleId`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(stringToSign string, userId string) (string, error) {
+func GenerateJWT(stringToSign string, userId string, roleId uint) (string, error) {
 	claim := jwtPasswordClaims{
 		Password: stringToSign,
+		RoleId: roleId,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
@@ -35,7 +37,7 @@ func GenerateJWT(stringToSign string, userId string) (string, error) {
 	return signedToken, nil
 }
 
-func VeifyToken(signedToken string, stringToVerify string) (bool, error) {
+func VeifyToken(signedToken string) (bool, error, *jwtPasswordClaims) {
 	claims := &jwtPasswordClaims{}
 
 	token, err := jwt.ParseWithClaims(signedToken, claims, func(token *jwt.Token) (interface{}, error) {
@@ -46,18 +48,14 @@ func VeifyToken(signedToken string, stringToVerify string) (bool, error) {
 	})
 
 	if err != nil {
-		return false, err
+		return false, err, claims
 	}
 
 	if !token.Valid {
-		return false, fmt.Errorf("Invalid token")
+		return false, fmt.Errorf("Invalid token"), claims
 	}
 
-	if claims.Password != stringToVerify {
-		return false, fmt.Errorf("Password mismatch")
-	}
-
-	return true, nil
+	return true, nil, claims
 }
 
 // func main() {

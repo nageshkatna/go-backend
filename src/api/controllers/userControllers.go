@@ -32,7 +32,9 @@ func (h *UserController) LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	}
 
-	token, err := helper.GenerateJWT(req.Password, users[0].Password)
+	roleId := (*users[0].UserRoles)[0].RoleId
+
+	token, err := helper.GenerateJWT(req.Password, users[0].Password, roleId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -61,7 +63,7 @@ func (h *UserController) RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := helper.GenerateJWT(req.Password, res.UserId)
+	token, err := helper.GenerateJWT(req.Password, res.UserId, 1)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -69,35 +71,4 @@ func (h *UserController) RegisterHandler(c *gin.Context) {
 	res.Token = token
 
 	c.JSON(http.StatusCreated, &res)
-}
-
-func (uc *UserController) InviteUser(c *gin.Context) {
-	req := &dto.InviteUserRequest{}
-	err := c.ShouldBindJSON(req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
-	}
-
-	us := services.NewUserService()
-
-	user := &dto.RegisterUserRequest{
-		UserBaseRequest: dto.UserBaseRequest{
-			FirstName: req.FirstName,
-			LastName: req.LastName,
-			Email: req.Email,
-		},
-		Password: ";ash#2asdf84333as!@9-9/SS",
-	}
-
-	role := &[]models.UserRole{{RoleId: req.RoleId}}
-
-	_, errs := us.CreateUser(user, role)
-	if(errs != nil) {
-		c.JSON(http.StatusConflict, gin.H{"error": errs.Error()})
-		return
-	}
-
-	//Send Invite email by using Go Routine
-
-	c.JSON(http.StatusCreated, gin.H{"message": "Invite Sent"})
 }

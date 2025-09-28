@@ -10,5 +10,4 @@ func UserRoutes(router *gin.RouterGroup) {
 	c := controllers.NewUserController()
 	router.POST("/login", c.LoginHandler)
 	router.POST("/register", c.RegisterHandler)
-	router.POST("/invite-user", c.InviteUser)
 }

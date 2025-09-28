@@ -1,8 +1,6 @@
 package helper
 
 import (
-	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,6 +14,5 @@ func HashPassword(stringToHash string) (string, error){
 
 func CheckHashPassword(hashedPassword, plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
-	fmt.Println("Password match error: ", err)
 	return err == nil
 }	
