@@ -58,3 +58,7 @@ type UpdateRequest struct {
 	UpdateUserObj
 	UserId string `json:"userId" binding:"required"`
 }
+
+type RequestWithUserId struct {
+	UserId string `json:"userId" binding:"required"`
+}

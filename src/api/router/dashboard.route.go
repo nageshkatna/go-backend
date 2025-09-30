@@ -14,4 +14,5 @@ func DashboardRoutes(router *gin.RouterGroup) {
 	router.POST("/invite-user", middleware.AuthorizeRequest([]string{"admin","manager"}), c.InviteUser)
 	router.GET("/listAllUsers", c.ListAllUsers)
 	router.PATCH("/updateUser", middleware.AuthorizeRequest([]string{"admin", "manager"}), c.UpdateUser)
+	router.DELETE("/deleteUser", middleware.AuthorizeRequest([]string{"admin", "manager"}), c.DeleteUser)
 }

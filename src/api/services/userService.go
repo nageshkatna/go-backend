@@ -156,3 +156,12 @@ func (*UserService) UpdateUser(userId string, updateObj dto.UpdateUserObj) (stri
 
 	return "updated", nil
 }
+
+func (*UserService) DeleteUser(userId string) (error) {
+	db := database.GetDB()
+	
+	if err := db.Where("id = ?", userId).Delete(&models.User{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

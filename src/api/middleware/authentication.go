@@ -44,6 +44,7 @@ func AuthorizeRequest(requiredRoles []string) gin.HandlerFunc {
 
 		if ok {
 			rs := services.NewRoleService{}
+
 			role, err := rs.GetRoleById(uint(roleId))
 			if err != nil {
 				ctx.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Error in finding the role from the provided RoleId %v", err)})
@@ -53,6 +54,7 @@ func AuthorizeRequest(requiredRoles []string) gin.HandlerFunc {
 
 			authorized := false
 			for _, r := range requiredRoles {
+				
 				if r == role[0].Name {
 					authorized = true
 					return

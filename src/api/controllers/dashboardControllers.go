@@ -78,19 +78,19 @@ func (*DashboardController) UpdateUser(c *gin.Context) {
 	var user = dto.UpdateUserObj{}
 
 	if req.FirstName != nil {
-		user.FirstName = *&req.FirstName
+		user.FirstName = req.FirstName
 	}
 
 	if req.LastName != nil {
-		user.LastName = *&req.LastName
+		user.LastName = req.LastName
 	}
 
 	if req.Email != nil {
-		user.Email = *&req.Email
+		user.Email = req.Email
 	}
 
 	if req.RoleId != nil {
-		user.RoleId = *&req.RoleId
+		user.RoleId = req.RoleId
 	}
 
 	// fmt.Printf("%+v", user)
@@ -104,4 +104,21 @@ func (*DashboardController) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User Updated Successfully!"})
+}
+
+func (*DashboardController) DeleteUser(c *gin.Context) {
+	req := dto.RequestWithUserId{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	us := services.NewUserService()
+
+	if err := us.DeleteUser(req.UserId); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{"message": "User Deleted Successfully"})
 }
