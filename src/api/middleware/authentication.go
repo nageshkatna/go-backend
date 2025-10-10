@@ -14,16 +14,16 @@ func AuthencticateRequest() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		auth := ctx.GetHeader("Authorization")
 		token := strings.Split(auth, " ")
-		
-		isValid, err, claim := helper.VeifyToken(token[1])
+
+		isValid, claim, err := helper.VeifyToken(token[1])
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Sprintf("Error in verify token %v", err)})
 			ctx.Abort()
 			return
-		} else if !isValid{
+		} else if !isValid {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Token"})
 			ctx.Abort()
-			return 
+			return
 		}
 
 		ctx.Set("userId", claim.Issuer)
@@ -39,7 +39,7 @@ func AuthorizeRequest(requiredRoles []string) gin.HandlerFunc {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": "userId wasn't provided"})
 			ctx.Abort()
 			return
-		} 
+		}
 		roleId, ok := roleIdRaw.(uint)
 
 		if ok {
@@ -54,7 +54,7 @@ func AuthorizeRequest(requiredRoles []string) gin.HandlerFunc {
 
 			authorized := false
 			for _, r := range requiredRoles {
-				
+
 				if r == role[0].Name {
 					authorized = true
 					return

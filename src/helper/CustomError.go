@@ -6,7 +6,7 @@ import (
 
 type CustomErrors struct {
 	Message string
-	Field  string
+	Field   string
 }
 
 func (ce *CustomErrors) CreateUserError() error {

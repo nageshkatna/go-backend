@@ -40,11 +40,11 @@ func SeedUsers(db *gorm.DB) error {
 	users := []models.User{
 		{Id: uuid.New(), FirstName: "John", LastName: "Doe", Email: "john.doe@gmail.com", Password: hashedPassword},
 		{Id: uuid.New(), FirstName: "Jane", LastName: "Smith", Email: "jane.smith@gmail.com", Password: hashedPassword},
-		{Id: uuid.New(), FirstName: "Alice", LastName: "Johnson", Email: "alice.johnson@gmail.com", Password: hashedPassword},	
+		{Id: uuid.New(), FirstName: "Alice", LastName: "Johnson", Email: "alice.johnson@gmail.com", Password: hashedPassword},
 	}
 
 	for _, user := range users {
-		err := db.FirstOrCreate(&user, models.User{Email:user.Email}).Error
+		err := db.FirstOrCreate(&user, models.User{Email: user.Email}).Error
 		if err != nil {
 			log.Printf("❌ Failed to seed Users table %v\n", err)
 			return err
@@ -55,8 +55,8 @@ func SeedUsers(db *gorm.DB) error {
 	return nil
 }
 
-func SeedUserRoles(db *gorm.DB) error{
-	var users []models.User	
+func SeedUserRoles(db *gorm.DB) error {
+	var users []models.User
 	err := db.Find(&users).Error
 	if err != nil {
 		log.Printf("❌ Failed to fetch Users table data %v\n", err)
@@ -70,7 +70,7 @@ func SeedUserRoles(db *gorm.DB) error{
 		log.Printf("❌ Failed to fetch Roles table data %v\n", errs)
 		return errs
 	}
-	
+
 	userroles := []models.UserRole{
 		{UserId: users[0].Id, RoleId: uint(roles[0].Id)}, // John Doe as admin
 		{UserId: users[1].Id, RoleId: uint(roles[1].Id)}, // Jane Smith as user
@@ -79,7 +79,7 @@ func SeedUserRoles(db *gorm.DB) error{
 
 	for _, userrole := range userroles {
 		err := db.FirstOrCreate(&userrole, models.UserRole{UserId: userrole.UserId, RoleId: userrole.RoleId}).Error
-		if(err != nil){
+		if err != nil {
 			log.Printf("❌ Failed to seed UserRoles table %v\n", err)
 			return err
 		}

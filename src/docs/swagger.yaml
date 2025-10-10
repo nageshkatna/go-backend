@@ -1,0 +1,326 @@
+basePath: /api/v1/
+definitions:
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  dto.FetchUserRoleWithPaginatedResponse:
+    properties:
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      totalPages:
+        type: integer
+      totalRecords:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/dto.FetchUserWithRole'
+        type: array
+    required:
+    - page
+    - pageSize
+    - totalPages
+    - totalRecords
+    type: object
+  dto.FetchUserWithRole:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      roleName:
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    - roleName
+    type: object
+  dto.InviteUserRequest:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      roleId:
+        type: integer
+    required:
+    - email
+    - firstName
+    - lastName
+    - roleId
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LoginResponse:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.Pagination:
+    properties:
+      page:
+        type: integer
+      pageSize:
+        type: integer
+    required:
+    - page
+    - pageSize
+    type: object
+  dto.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    - password
+    type: object
+  dto.RequestWithUserId:
+    properties:
+      userId:
+        type: string
+    required:
+    - userId
+    type: object
+  dto.UpdateRequest:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      roleId:
+        type: integer
+      userId:
+        type: string
+    required:
+    - userId
+    type: object
+host: localhost:5000
+info:
+  contact: {}
+  description: This is a Go backend user API.
+  title: Go Backend user api
+  version: "1.0"
+paths:
+  /dashboard/deleteUser:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by Id. Authorized user like admin and manager can
+        only delete the user.
+      parameters:
+      - description: User Id
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestWithUserId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generic response with message
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a user by Id
+      tags:
+      - Dashboard
+  /dashboard/invite-user:
+    post:
+      consumes:
+      - application/json
+      description: Invite a user or Create a user by Admin or Manager.
+      parameters:
+      - description: User Basic Info with role id
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InviteUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generic response with message
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Invite a user
+      tags:
+      - Dashboard
+  /dashboard/listAllUsers:
+    post:
+      consumes:
+      - application/json
+      description: Get All Users
+      parameters:
+      - description: Pagination info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Pagination'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: List of All Users with roles
+          schema:
+            $ref: '#/definitions/dto.FetchUserRoleWithPaginatedResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List All Users
+      tags:
+      - Dashboard
+  /dashboard/updateUser:
+    patch:
+      consumes:
+      - application/json
+      description: Updates First Names, Last Name, Email and Role only. To update
+        Role, need to provide role id. Authorized user like admin and manager can
+        only delete the user.
+      parameters:
+      - description: User Basic Info parameter to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generic response with message
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a user by Id
+      tags:
+      - Dashboard
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user by email and password.
+      parameters:
+      - description: Email and Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token and UserId
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: User Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Login
+      tags:
+      - Authentication
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register user by first name, last name, email and password.
+      parameters:
+      - description: Email and Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Token and UserId
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: User Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Register
+      tags:
+      - Authentication
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and then your JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -6,8 +6,7 @@ import (
 	"log"
 )
 
-type NewRoleService struct {}
-
+type NewRoleService struct{}
 
 func (*NewRoleService) GetRoleById(roleId uint) ([]models.Role, error) {
 	db := database.GetDB()

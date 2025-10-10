@@ -10,19 +10,19 @@ import (
 var secretkey = []byte("mySecretKey")
 
 type jwtPasswordClaims struct {
-	Password string `json:"password"`
-	RoleId uint `json:roleId`
 	jwt.RegisteredClaims
+	Password string `json:"password"`
+	RoleId   uint   `json:"roleId"`
 }
 
 func GenerateJWT(stringToSign string, userId string, roleId uint) (string, error) {
 	claim := jwtPasswordClaims{
 		Password: stringToSign,
-		RoleId: roleId,
+		RoleId:   roleId,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			IssuedAt: jwt.NewNumericDate(time.Now()),
-			Issuer: userId,
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    userId,
 		},
 	}
 
@@ -30,14 +30,14 @@ func GenerateJWT(stringToSign string, userId string, roleId uint) (string, error
 
 	signedToken, err := token.SignedString((secretkey))
 
-	if(err != nil){
+	if err != nil {
 		return err.Error(), err
 	}
 
 	return signedToken, nil
 }
 
-func VeifyToken(signedToken string) (bool, error, *jwtPasswordClaims) {
+func VeifyToken(signedToken string) (bool, *jwtPasswordClaims, error) {
 	claims := &jwtPasswordClaims{}
 
 	token, err := jwt.ParseWithClaims(signedToken, claims, func(token *jwt.Token) (interface{}, error) {
@@ -48,28 +48,12 @@ func VeifyToken(signedToken string) (bool, error, *jwtPasswordClaims) {
 	})
 
 	if err != nil {
-		return false, err, claims
+		return false, claims, err
 	}
 
 	if !token.Valid {
-		return false, fmt.Errorf("Invalid token"), claims
+		return false, claims, fmt.Errorf("invalid token")
 	}
 
-	return true, nil, claims
+	return true, claims, nil
 }
-
-// func main() {
-// 	token, err := GenerateJWT("myPassword123", "email.com")
-// 	if err != nil {
-// 		fmt.Println("Error generating token:", err)
-// 		return
-// 	}
-
-// 	isValid, err := VeifyToken(token, "myPassword123")
-// 	if err != nil {
-// 		fmt.Println("Error verifying token:", err)
-// 		return
-// 	}
-
-// 	fmt.Println("Is token valid?", isValid)
-// }
