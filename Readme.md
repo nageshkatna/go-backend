@@ -46,7 +46,7 @@ docker compose -f "docker/docker-compose.yml" down
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:5000/v1/user/login' \
+  'http://localhost:5000/api/v1/user/login' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -58,7 +58,7 @@ curl -X 'POST' \
 ##### List all users
 
 ```bash
-curl --location --request GET 'http://localhost:5000/v1/dashboard/listAllUsers' \
+curl --location --request GET 'http://localhost:5000/apiv1/dashboard/listAllUsers' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: <ENTER_YOUR_TOKEN>' \
 --header 'Cookie: csrftoken=vGyWONqdzB8DyhUqN0MNsEE54cAVmq24' \
@@ -100,3 +100,9 @@ curl --location --request GET 'http://localhost:5000/v1/dashboard/listAllUsers' 
   "totalPages": 1
 }
 ```
+
+## Project preview
+
+## Swagger
+
+<p align="center"><img src='/docs/files/swagger.png' alt='Golang Web API preview' /></p>
