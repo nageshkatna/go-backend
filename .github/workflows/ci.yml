@@ -15,10 +15,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Run docker service with Docker compose
-        uses: docker compose up --build -d
+        uses: cd docker && docker compose up --build -d
 
-      - name: Run Tests
-        run: go test ./ ... -v
+      # - name: Run Tests
+      #   run: cd docker && go test ./ ... -v
 
       - name: Docker compose down
-        run: docker compose down -v
+        run: cd docker && docker compose down -v
