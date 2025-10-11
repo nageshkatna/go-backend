@@ -18,6 +18,14 @@ docker compose -f "docker/docker-compose.yml" up -d
 
 #### Run migrations
 
+##### Install golang migrate
+
+```bash
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
+
+##### Run migrate script
+
 ```bash
 cd src/scripts
 ./migrate.sh -up

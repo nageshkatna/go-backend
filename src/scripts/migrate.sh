@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 # Database connection string
-DB_URL="postgres://postgres:postgres@localhost:5434/postgres?sslmode=disable"
-MIGRATIONS_PATH="../database/migrations"
+SCRIPT_DIR="$(dirname "$0")"
+DB_URL="postgres://postgres:postgres@user_db:5432/postgres?sslmode=disable"
+MIGRATIONS_PATH="/root/database/migrations"
 
 # Check arguments
 if [ $# -eq 0 ]; then
