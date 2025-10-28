@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"go-backend/api/dto"
 	"go-backend/api/services"
 	"go-backend/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,17 +23,31 @@ func NewDashboardController() *DashboardController {
 //
 //	@Summary		List All Users
 //	@Description	Get All Users
-//	@Tags			Dashboard
-//	@Accept			json
+//	@Tags			User
 //	@Produce		json
-//	@Param			request	body		dto.Pagination							true	"Pagination info"
-//	@Success		202		{object}	dto.FetchUserRoleWithPaginatedResponse	"List of All Users with roles"
-//	@Failure		400		{object}	dto.ErrorResponse						"Bad request"
+//	@Param			page		path		int										true	"Page number"
+//	@Param			pageSize	path		int										true	"Size of the page"
+//	@Success		202			{object}	dto.FetchUserRoleWithPaginatedResponse	"List of All Users with roles"
+//	@Failure		400			{object}	dto.ErrorResponse						"Bad request"
 //	@Security		BearerAuth
-//	@Router			/dashboard/listAllUsers [post]
+//	@Router			/dashboard/listAllUsers [get]
 func (*DashboardController) ListAllUsers(c *gin.Context) {
 
 	req := &dto.Pagination{}
+	if page, err := strconv.Atoi(c.Param("page")); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
+		return
+	} else {
+		req.Page = page
+	}
+
+	if pageSize, err := strconv.Atoi(c.Param("pageSize")); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
+		return
+	} else {
+		req.PageSize = pageSize
+	}
+
 	err := c.ShouldBindJSON(req)
 
 	if err != nil {
@@ -50,18 +66,18 @@ func (*DashboardController) ListAllUsers(c *gin.Context) {
 	c.JSON(http.StatusAccepted, response)
 }
 
-// ListUser godoc
+// InviteUser godoc
 //
 //	@Summary		Invite a user
 //	@Description	Invite a user or Create a user by Admin or Manager.
-//	@Tags			Dashboard
+//	@Tags			User
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		dto.InviteUserRequest	true	"User Basic Info with role id"
 //	@Success		200		{object}	dto.MessageResponse		"Generic response with message"
 //	@Failure		400		{object}	dto.ErrorResponse		"Bad request"
 //	@Security		BearerAuth
-//	@Router			/dashboard/invite-user [post]
+//	@Router			/dashboard/User [post]
 func (*DashboardController) InviteUser(c *gin.Context) {
 	req := &dto.InviteUserRequest{}
 	err := c.ShouldBindJSON(req)
@@ -94,18 +110,56 @@ func (*DashboardController) InviteUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto.MessageResponse{Message: "Invite Sent"})
 }
 
+// InviteBulkUser godoc
+//
+//	@Summary		Invite users in Bulk
+//	@Description	Invite users in Bulk or Create users in Bulk by Admin or Manager.
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		[]dto.InviteUserRequest	true	"User Basic Info with role id"
+//	@Success		200		{object}	dto.MessageResponse		"Generic response with message"
+//	@Failure		400		{object}	dto.ErrorResponse		"Bad request"
+//	@Security		BearerAuth
+//	@Router			/dashboard/inviteBulkUser [post]
+func (*DashboardController) InviteBulkUsers(c *gin.Context) {
+	req := []dto.InviteUserRequest{}
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	// us := services.NewUserService()
+
+	registerUser := []dto.RegisterUserRequest{}
+
+	for _, user := range req {
+		newUser := &dto.RegisterUserRequest{
+			UserBaseRequest: dto.UserBaseRequest{
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+				Email:     user.Email,
+			},
+			Password: ";ash#2asdf84333as!@9-9/SS",
+		}
+		registerUser = append(registerUser, *newUser)
+	}
+
+	fmt.Printf("register User %v", registerUser)
+}
+
 // UpdateUser godoc
 //
 //	@Summary		Update a user by Id
 //	@Description	Updates First Names, Last Name, Email and Role only. To update Role, need to provide role id. Authorized user like admin and manager can only delete the user.
-//	@Tags			Dashboard
+//	@Tags			User
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		dto.UpdateRequest	true	"User Basic Info parameter to update"
 //	@Success		200		{object}	dto.MessageResponse	"Generic response with message"
 //	@Failure		400		{object}	dto.ErrorResponse	"Bad request"
 //	@Security		BearerAuth
-//	@Router			/dashboard/updateUser [patch]
+//	@Router			/dashboard/User [patch]
 func (*DashboardController) UpdateUser(c *gin.Context) {
 	req := dto.UpdateRequest{}
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -146,14 +200,14 @@ func (*DashboardController) UpdateUser(c *gin.Context) {
 //
 //	@Summary		Delete a user by Id
 //	@Description	Delete a user by Id. Authorized user like admin and manager can only delete the user.
-//	@Tags			Dashboard
+//	@Tags			User
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		dto.RequestWithUserId	true	"User Id"
 //	@Success		200		{object}	dto.MessageResponse		"Generic response with message"
 //	@Failure		400		{object}	dto.ErrorResponse		"Bad request"
 //	@Security		BearerAuth
-//	@Router			/dashboard/deleteUser [delete]
+//	@Router			/dashboard/User [delete]
 func (*DashboardController) DeleteUser(c *gin.Context) {
 	req := dto.RequestWithUserId{}
 	if err := c.ShouldBindJSON(&req); err != nil {

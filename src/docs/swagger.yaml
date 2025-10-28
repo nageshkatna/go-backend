@@ -79,16 +79,6 @@ definitions:
       message:
         type: string
     type: object
-  dto.Pagination:
-    properties:
-      page:
-        type: integer
-      pageSize:
-        type: integer
-    required:
-    - page
-    - pageSize
-    type: object
   dto.RegisterUserRequest:
     properties:
       email:
@@ -134,7 +124,7 @@ info:
   title: Go Backend user api
   version: "1.0"
 paths:
-  /dashboard/deleteUser:
+  /dashboard/User:
     delete:
       consumes:
       - application/json
@@ -162,64 +152,7 @@ paths:
       - BearerAuth: []
       summary: Delete a user by Id
       tags:
-      - Dashboard
-  /dashboard/invite-user:
-    post:
-      consumes:
-      - application/json
-      description: Invite a user or Create a user by Admin or Manager.
-      parameters:
-      - description: User Basic Info with role id
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.InviteUserRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Generic response with message
-          schema:
-            $ref: '#/definitions/dto.MessageResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Invite a user
-      tags:
-      - Dashboard
-  /dashboard/listAllUsers:
-    post:
-      consumes:
-      - application/json
-      description: Get All Users
-      parameters:
-      - description: Pagination info
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.Pagination'
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: List of All Users with roles
-          schema:
-            $ref: '#/definitions/dto.FetchUserRoleWithPaginatedResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: List All Users
-      tags:
-      - Dashboard
-  /dashboard/updateUser:
+      - User
     patch:
       consumes:
       - application/json
@@ -248,7 +181,94 @@ paths:
       - BearerAuth: []
       summary: Update a user by Id
       tags:
-      - Dashboard
+      - User
+    post:
+      consumes:
+      - application/json
+      description: Invite a user or Create a user by Admin or Manager.
+      parameters:
+      - description: User Basic Info with role id
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InviteUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generic response with message
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Invite a user
+      tags:
+      - User
+  /dashboard/inviteBulkUser:
+    post:
+      consumes:
+      - application/json
+      description: Invite users in Bulk or Create users in Bulk by Admin or Manager.
+      parameters:
+      - description: User Basic Info with role id
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.InviteUserRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generic response with message
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Invite users in Bulk
+      tags:
+      - User
+  /dashboard/listAllUsers:
+    get:
+      description: Get All Users
+      parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Size of the page
+        in: path
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: List of All Users with roles
+          schema:
+            $ref: '#/definitions/dto.FetchUserRoleWithPaginatedResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List All Users
+      tags:
+      - User
   /user/login:
     post:
       consumes:

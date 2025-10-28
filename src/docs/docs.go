@@ -15,52 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/dashboard/deleteUser": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete a user by Id. Authorized user like admin and manager can only delete the user.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Dashboard"
-                ],
-                "summary": "Delete a user by Id",
-                "parameters": [
-                    {
-                        "description": "User Id",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RequestWithUserId"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Generic response with message",
-                        "schema": {
-                            "$ref": "#/definitions/dto.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/dashboard/invite-user": {
+        "/dashboard/User": {
             "post": {
                 "security": [
                     {
@@ -75,7 +30,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dashboard"
+                    "User"
                 ],
                 "summary": "Invite a user",
                 "parameters": [
@@ -103,16 +58,14 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/dashboard/listAllUsers": {
-            "post": {
+            },
+            "delete": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get All Users",
+                "description": "Delete a user by Id. Authorized user like admin and manager can only delete the user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -120,25 +73,25 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dashboard"
+                    "User"
                 ],
-                "summary": "List All Users",
+                "summary": "Delete a user by Id",
                 "parameters": [
                     {
-                        "description": "Pagination info",
+                        "description": "User Id",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Pagination"
+                            "$ref": "#/definitions/dto.RequestWithUserId"
                         }
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": "List of All Users with roles",
+                    "200": {
+                        "description": "Generic response with message",
                         "schema": {
-                            "$ref": "#/definitions/dto.FetchUserRoleWithPaginatedResponse"
+                            "$ref": "#/definitions/dto.MessageResponse"
                         }
                     },
                     "400": {
@@ -148,9 +101,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/dashboard/updateUser": {
+            },
             "patch": {
                 "security": [
                     {
@@ -165,7 +116,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Dashboard"
+                    "User"
                 ],
                 "summary": "Update a user by Id",
                 "parameters": [
@@ -184,6 +135,101 @@ const docTemplate = `{
                         "description": "Generic response with message",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/inviteBulkUser": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Invite users in Bulk or Create users in Bulk by Admin or Manager.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Invite users in Bulk",
+                "parameters": [
+                    {
+                        "description": "User Basic Info with role id",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.InviteUserRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Generic response with message",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/listAllUsers": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get All Users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "List All Users",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size of the page",
+                        "name": "pageSize",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "List of All Users with roles",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FetchUserRoleWithPaginatedResponse"
                         }
                     },
                     "400": {
@@ -415,21 +461,6 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.Pagination": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
                 }
             }
         },

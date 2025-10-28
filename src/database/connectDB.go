@@ -13,7 +13,7 @@ var dbClient *gorm.DB
 
 func ConnectDB() error {
 	var err error
-	dbString := "host=user_db user=postgres password=postgres dbname=postgres port=5432"
+	dbString := "host=localhost user=postgres password=postgres dbname=postgres port=5434"
 
 	dbClient, err = gorm.Open(postgres.Open(dbString), &gorm.Config{})
 

@@ -113,4 +113,10 @@ curl --location --request GET 'http://localhost:5000/apiv1/dashboard/listAllUser
 
 ## Swagger
 
+##### Swagger Address
+
+```bash
+http://localhost:5000/swagger/index.html
+```
+
 <p align="center"><img src='/docs/images/swagger.png' alt='Golang Web API preview' /></p>
