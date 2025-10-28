@@ -30,7 +30,7 @@ func NewDashboardController() *DashboardController {
 //	@Success		202			{object}	dto.FetchUserRoleWithPaginatedResponse	"List of All Users with roles"
 //	@Failure		400			{object}	dto.ErrorResponse						"Bad request"
 //	@Security		BearerAuth
-//	@Router			/dashboard/Users [get]
+//	@Router			/dashboard/User [get]
 func (*DashboardController) ListAllUsers(c *gin.Context) {
 
 	req := &dto.Pagination{}

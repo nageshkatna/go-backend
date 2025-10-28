@@ -153,6 +153,35 @@ paths:
       summary: Delete a user by Id
       tags:
       - User
+    get:
+      description: Get All Users
+      parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Size of the page
+        in: path
+        name: pageSize
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: List of All Users with roles
+          schema:
+            $ref: '#/definitions/dto.FetchUserRoleWithPaginatedResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List All Users
+      tags:
+      - User
     patch:
       consumes:
       - application/json
@@ -237,36 +266,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Invite users in Bulk
-      tags:
-      - User
-  /dashboard/listAllUsers:
-    get:
-      description: Get All Users
-      parameters:
-      - description: Page number
-        in: path
-        name: page
-        required: true
-        type: integer
-      - description: Size of the page
-        in: path
-        name: pageSize
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: List of All Users with roles
-          schema:
-            $ref: '#/definitions/dto.FetchUserRoleWithPaginatedResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: List All Users
       tags:
       - User
   /user/login:
